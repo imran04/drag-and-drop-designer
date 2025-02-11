@@ -1,65 +1,88 @@
-import { Editor as CraftEditor } from '@craftjs/core';
-import { Text } from "@/components/editor/components/Text";
-import { Button } from "@/components/editor/components/Button";
-import { Container } from "@/components/editor/components/Container";
-import { Form } from "@/components/editor/components/Form";
-import { Input } from "@/components/editor/components/Input";
-import { Row } from "@/components/editor/components/Row";
-import { Column } from "@/components/editor/components/Column";
+import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor } from '@dnd-kit/core';
+import { useCallback, useState } from 'react';
 
-// Enable craft.js editor with our components
-export const Editor = ({children}: {children: React.ReactNode}) => (
-  <CraftEditor
-    enabled={true}
-    resolver={{
-      Text,
-      Button,
-      Container,
-      Form,
-      Input,
-      Row,
-      Column,
-    }}
-  >
-    {children}
-  </CraftEditor>
-);
+interface EditorProps {
+  children: React.ReactNode;
+}
 
-// List of available components for the component panel
+export const Editor = ({ children }: EditorProps) => {
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor)
+  );
+
+  const handleDragStart = useCallback((event: any) => {
+    setActiveId(event.active.id);
+  }, []);
+
+  const handleDragEnd = useCallback((event: any) => {
+    setActiveId(null);
+  }, []);
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      {children}
+      <DragOverlay>
+        {activeId ? <div>Dragging {activeId}</div> : null}
+      </DragOverlay>
+    </DndContext>
+  );
+};
+
+// Available component types for the component panel
 export const componentTypes = [
   {
+    id: "text",
     type: "Text",
-    label: "Text",
-    props: { text: "New Text" },
+    label: "Text Block",
+    defaultProps: {
+      text: "New Text"
+    }
   },
   {
+    id: "button",
     type: "Button",
     label: "Button",
-    props: { text: "Click Me" },
+    defaultProps: {
+      text: "Click Me"
+    }
   },
   {
+    id: "container",
     type: "Container",
     label: "Container",
-    props: {},
+    defaultProps: {}
   },
   {
+    id: "input",
     type: "Input",
     label: "Input Field",
-    props: { placeholder: "Enter text..." },
+    defaultProps: {
+      placeholder: "Enter text..."
+    }
   },
   {
+    id: "row",
     type: "Row",
-    label: "Row",
-    props: {},
+    label: "Row Layout",
+    defaultProps: {}
   },
   {
+    id: "column",
     type: "Column",
-    label: "Column",
-    props: {},
+    label: "Column Layout",
+    defaultProps: {}
   },
   {
+    id: "form",
     type: "Form",
     label: "Form",
-    props: {},
-  },
+    defaultProps: {}
+  }
 ];
