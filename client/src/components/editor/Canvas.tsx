@@ -1,22 +1,24 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Card } from "@/components/ui/card";
 import { useEditor } from "@/lib/editor";
-import { Text } from "./components/Text";
+import { RichText } from "./components/RichText";
 import { Button } from "./components/Button";
 import { Container } from "./components/Container";
-import { Form } from "./components/Form";
-import { Input } from "./components/Input";
 import { Row } from "./components/Row";
 import { Column } from "./components/Column";
+import { Heading } from "./components/Heading";
+import { Image } from "./components/Image";
+import { Custom } from "./components/Custom";
 
 const componentMap = {
-  Text,
+  RichText,
   Button,
   Container,
-  Form,
-  Input,
   Row,
   Column,
+  Heading,
+  Image,
+  Custom
 };
 
 export default function Canvas() {

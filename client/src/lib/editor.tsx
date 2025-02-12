@@ -60,7 +60,6 @@ export const Editor = ({ children }: EditorProps) => {
   );
 };
 
-// Create context for components
 interface EditorContextType {
   components: ComponentData[];
 }
@@ -82,32 +81,37 @@ export const componentTypes = [
       {
         id: "row",
         type: "Row",
-        label: "Row Layout",
+        label: "Row",
         defaultProps: {}
       },
       {
         id: "column",
         type: "Column",
-        label: "Column Layout",
-        defaultProps: {}
+        label: "Column",
+        defaultProps: {
+          span: 12 // Default to full width
+        }
       }
     ]
   },
   {
-    category: "Form",
+    category: "Blocks",
     components: [
       {
-        id: "form",
-        type: "Form",
-        label: "Form",
-        defaultProps: {}
+        id: "text",
+        type: "RichText",
+        label: "Paragraph",
+        defaultProps: {
+          content: "Enter your text here..."
+        }
       },
       {
-        id: "input",
-        type: "Input",
-        label: "Input Field",
+        id: "heading",
+        type: "Heading",
+        label: "Heading",
         defaultProps: {
-          placeholder: "Enter text..."
+          level: 1,
+          text: "Heading"
         }
       },
       {
@@ -115,20 +119,27 @@ export const componentTypes = [
         type: "Button",
         label: "Button",
         defaultProps: {
-          text: "Click Me"
+          text: "Click Me",
+          variant: "default"
         }
-      }
-    ]
-  },
-  {
-    category: "Basic",
-    components: [
+      },
       {
-        id: "text",
-        type: "Text",
-        label: "Text Block",
+        id: "image",
+        type: "Image",
+        label: "Image",
         defaultProps: {
-          text: "New Text"
+          src: "",
+          alt: "Image",
+          width: "100%",
+          height: "auto"
+        }
+      },
+      {
+        id: "custom",
+        type: "Custom",
+        label: "Custom Block",
+        defaultProps: {
+          content: "Custom content goes here"
         }
       }
     ]
