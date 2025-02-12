@@ -29,14 +29,17 @@ export const Editor = ({ children }: EditorProps) => {
     setActiveId(null);
 
     if (over && over.id === 'canvas') {
-      const componentType = componentTypes.find(c => c.id === active.id);
+      const componentType = componentTypes.find(c => c.components.find(comp => comp.id === active.id));
       if (componentType) {
-        const newComponent: ComponentData = {
-          id: `${componentType.type}-${Date.now()}`,
-          type: componentType.type,
-          props: { ...componentType.defaultProps }
-        };
-        setComponents(prev => [...prev, newComponent]);
+        const foundComponent = componentType.components.find(comp => comp.id === active.id);
+        if(foundComponent){
+          const newComponent: ComponentData = {
+            id: `${foundComponent.type}-${Date.now()}`,
+            type: foundComponent.type,
+            props: { ...foundComponent.defaultProps }
+          };
+          setComponents(prev => [...prev, newComponent]);
+        }
       }
     }
   }, []);
@@ -68,51 +71,66 @@ export const useEditor = () => useContext(EditorContext);
 // Available component types for the component panel
 export const componentTypes = [
   {
-    id: "text",
-    type: "Text",
-    label: "Text Block",
-    defaultProps: {
-      text: "New Text"
-    }
+    category: "Layout",
+    components: [
+      {
+        id: "container",
+        type: "Container",
+        label: "Container",
+        defaultProps: {}
+      },
+      {
+        id: "row",
+        type: "Row",
+        label: "Row Layout",
+        defaultProps: {}
+      },
+      {
+        id: "column",
+        type: "Column",
+        label: "Column Layout",
+        defaultProps: {}
+      }
+    ]
   },
   {
-    id: "button",
-    type: "Button",
-    label: "Button",
-    defaultProps: {
-      text: "Click Me"
-    }
+    category: "Form",
+    components: [
+      {
+        id: "form",
+        type: "Form",
+        label: "Form",
+        defaultProps: {}
+      },
+      {
+        id: "input",
+        type: "Input",
+        label: "Input Field",
+        defaultProps: {
+          placeholder: "Enter text..."
+        }
+      },
+      {
+        id: "button",
+        type: "Button",
+        label: "Button",
+        defaultProps: {
+          text: "Click Me"
+        }
+      }
+    ]
   },
   {
-    id: "container",
-    type: "Container",
-    label: "Container",
-    defaultProps: {}
-  },
-  {
-    id: "input",
-    type: "Input",
-    label: "Input Field",
-    defaultProps: {
-      placeholder: "Enter text..."
-    }
-  },
-  {
-    id: "row",
-    type: "Row",
-    label: "Row Layout",
-    defaultProps: {}
-  },
-  {
-    id: "column",
-    type: "Column",
-    label: "Column Layout",
-    defaultProps: {}
-  },
-  {
-    id: "form",
-    type: "Form",
-    label: "Form",
-    defaultProps: {}
+    category: "Basic",
+    components: [
+      {
+        id: "text",
+        type: "Text",
+        label: "Text Block",
+        defaultProps: {
+          text: "New Text"
+        }
+      }
+    ]
   }
 ];
