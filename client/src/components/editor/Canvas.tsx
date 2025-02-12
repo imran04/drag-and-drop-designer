@@ -3,7 +3,9 @@ import { Card } from "@/components/ui/card";
 import { Element, Frame } from "@craftjs/core";
 import { Container } from "./components/Container";
 
+// Canvas component - the main drop target area for components
 export default function Canvas() {
+  // Set up the droppable area using dnd-kit
   const { setNodeRef } = useDroppable({
     id: 'canvas',
   });
@@ -14,7 +16,9 @@ export default function Canvas() {
         ref={setNodeRef}
         className="w-full h-full bg-background overflow-auto p-4"
       >
+        {/* CraftJS Frame component manages the editor state */}
         <Frame>
+          {/* Root container element that can accept dropped components */}
           <Element
             canvas
             is={Container}

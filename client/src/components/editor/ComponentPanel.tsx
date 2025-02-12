@@ -8,7 +8,9 @@ import { Card } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 
+// Draggable component wrapper that integrates with dnd-kit
 function DraggableComponent({ id, label }: { id: string; label: string }) {
+  // Set up draggable functionality using dnd-kit
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
@@ -31,6 +33,7 @@ function DraggableComponent({ id, label }: { id: string; label: string }) {
   );
 }
 
+// Component category section with collapsible functionality
 function ComponentSection({ category, components }: { 
   category: string; 
   components: Array<{ id: string; label: string; }> 
@@ -56,7 +59,9 @@ function ComponentSection({ category, components }: {
   );
 }
 
+// Settings panel for the currently selected component
 function SettingsSection() {
+  // Get the currently selected component from CraftJS
   const { selected } = useEditor((state) => ({
     selected: state.events.selected
   }));
@@ -84,6 +89,7 @@ function SettingsSection() {
   );
 }
 
+// Main component panel that contains both the component list and settings
 export default function ComponentPanel() {
   return (
     <ScrollArea className="h-screen">

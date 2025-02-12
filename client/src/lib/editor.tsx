@@ -14,29 +14,35 @@ interface EditorProps {
   children: React.ReactNode;
 }
 
+// Inner component that handles drag and drop functionality
 function EditorComponent({ children }: EditorProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const { actions } = useEditor();
+  const { actions } = useEditor(); // CraftJS actions for managing components
 
+  // Configure mouse and touch sensors for drag and drop
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor)
   );
 
+  // Track the currently dragged component
   const handleDragStart = useCallback((event: any) => {
     setActiveId(event.active.id);
   }, []);
 
+  // Handle component drops on the canvas
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
 
     if (over && over.id === 'canvas') {
+      // Find the dropped component type and create it
       const componentType = componentTypes.find(c => c.components.find(comp => comp.id === active.id));
       if (componentType) {
         const foundComponent = componentType.components.find(comp => comp.id === active.id);
         if(foundComponent) {
           const nodeId = `${foundComponent.type}-${Date.now()}`;
+          // Add the component to the CraftJS tree
           actions.add(
             foundComponent.type,
             { ...foundComponent.defaultProps },
@@ -61,6 +67,7 @@ function EditorComponent({ children }: EditorProps) {
   );
 }
 
+// Main Editor wrapper that provides CraftJS context
 export function Editor({ children }: EditorProps) {
   return (
     <CraftEditor
@@ -80,7 +87,7 @@ export function Editor({ children }: EditorProps) {
   );
 }
 
-// Available component types for the component panel
+// Define available component types for the component panel
 export const componentTypes = [
   {
     category: "Layout",
