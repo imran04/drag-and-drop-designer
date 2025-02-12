@@ -1,4 +1,4 @@
-import { Editor as CraftEditor, Frame } from '@craftjs/core';
+import { Editor as CraftEditor, Frame, useEditor } from '@craftjs/core';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent } from '@dnd-kit/core';
 import { useCallback, useState } from 'react';
 import { Container } from '@/components/editor/components/Container';
@@ -14,8 +14,9 @@ interface EditorProps {
   children: React.ReactNode;
 }
 
-export function Editor({ children }: EditorProps) {
+function EditorComponent({ children }: EditorProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { actions } = useEditor();
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -35,12 +36,32 @@ export function Editor({ children }: EditorProps) {
       if (componentType) {
         const foundComponent = componentType.components.find(comp => comp.id === active.id);
         if(foundComponent) {
-          console.log('Component dropped:', foundComponent.type);
+          const nodeId = `${foundComponent.type}-${Date.now()}`;
+          actions.add(
+            foundComponent.type,
+            { ...foundComponent.defaultProps },
+            'ROOT'
+          );
         }
       }
     }
-  }, []);
+  }, [actions]);
 
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      {children}
+      <DragOverlay>
+        {activeId ? <div>Dragging {activeId}</div> : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
+
+export function Editor({ children }: EditorProps) {
   return (
     <CraftEditor
       resolver={{
@@ -54,16 +75,7 @@ export function Editor({ children }: EditorProps) {
         Custom
       }}
     >
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        {children}
-        <DragOverlay>
-          {activeId ? <div>Dragging {activeId}</div> : null}
-        </DragOverlay>
-      </DndContext>
+      <EditorComponent>{children}</EditorComponent>
     </CraftEditor>
   );
 }

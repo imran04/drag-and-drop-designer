@@ -18,6 +18,7 @@ export default function Canvas() {
           <Element
             canvas
             is={Container}
+            className="min-h-[200px]"
           >
             <div className="flex items-center justify-center h-[200px] text-muted-foreground">
               Drag components here
