@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { componentTypes } from "@/lib/editor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 function DraggableComponent({ id, label }: { id: string; label: string }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -33,18 +36,41 @@ function ComponentSection({ category, components }: {
   components: Array<{ id: string; label: string; }> 
 }) {
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium text-muted-foreground mb-2">{category}</h3>
-      <div className="space-y-1">
-        {components.map((component) => (
-          <DraggableComponent
-            key={component.id}
-            id={component.id}
-            label={component.label}
-          />
-        ))}
-      </div>
-    </div>
+    <Collapsible defaultOpen>
+      <CollapsibleTrigger className="flex items-center w-full mb-2">
+        <h3 className="text-sm font-medium text-muted-foreground flex-1">{category}</h3>
+        <ChevronDown className="h-4 w-4" />
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <div className="space-y-1">
+          {components.map((component) => (
+            <DraggableComponent
+              key={component.id}
+              id={component.id}
+              label={component.label}
+            />
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+function SettingsSection() {
+  return (
+    <Card className="p-4 mb-4">
+      <Collapsible defaultOpen>
+        <CollapsibleTrigger className="flex items-center w-full mb-2">
+          <h3 className="text-sm font-medium text-muted-foreground flex-1">Settings</h3>
+          <ChevronDown className="h-4 w-4" />
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <p className="text-sm text-muted-foreground">
+            Select an element to edit its properties
+          </p>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
   );
 }
 
@@ -59,6 +85,7 @@ export default function ComponentPanel() {
           </p>
         </div>
         <Separator className="my-4" />
+        <SettingsSection />
         {componentTypes.map((section, index) => (
           <div key={section.category}>
             <ComponentSection
