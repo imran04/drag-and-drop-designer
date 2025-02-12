@@ -1,4 +1,4 @@
-import { useEditor } from "@/lib/editor";
+import { useEditor } from "@craftjs/core";
 import { useDraggable } from '@dnd-kit/core';
 import { Button } from "@/components/ui/button";
 import { componentTypes } from "@/lib/editor";
@@ -57,6 +57,10 @@ function ComponentSection({ category, components }: {
 }
 
 function SettingsSection() {
+  const { selected } = useEditor((state) => ({
+    selected: state.events.selected
+  }));
+
   return (
     <Card className="p-4 mb-4">
       <Collapsible defaultOpen>
@@ -65,9 +69,15 @@ function SettingsSection() {
           <ChevronDown className="h-4 w-4" />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <p className="text-sm text-muted-foreground">
-            Select an element to edit its properties
-          </p>
+          {selected ? (
+            <div className="text-sm">
+              Selected component: {selected}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Select an element to edit its properties
+            </p>
+          )}
         </CollapsibleContent>
       </Collapsible>
     </Card>

@@ -1,32 +1,12 @@
 import { useDroppable } from '@dnd-kit/core';
 import { Card } from "@/components/ui/card";
-import { useEditor } from "@/lib/editor";
-import { RichText } from "./components/RichText";
-import { Button } from "./components/Button";
+import { Element, Frame } from "@craftjs/core";
 import { Container } from "./components/Container";
-import { Row } from "./components/Row";
-import { Column } from "./components/Column";
-import { Heading } from "./components/Heading";
-import { Image } from "./components/Image";
-import { Custom } from "./components/Custom";
-
-const componentMap = {
-  RichText,
-  Button,
-  Container,
-  Row,
-  Column,
-  Heading,
-  Image,
-  Custom
-};
 
 export default function Canvas() {
   const { setNodeRef } = useDroppable({
     id: 'canvas',
   });
-
-  const { components } = useEditor();
 
   return (
     <div className="p-4 h-full">
@@ -34,22 +14,16 @@ export default function Canvas() {
         ref={setNodeRef}
         className="w-full h-full bg-background overflow-auto p-4"
       >
-        <div id="canvas-content" className="min-h-[200px]">
-          {components.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+        <Frame>
+          <Element
+            canvas
+            is={Container}
+          >
+            <div className="flex items-center justify-center h-[200px] text-muted-foreground">
               Drag components here
             </div>
-          ) : (
-            <div className="space-y-4">
-              {components.map((component) => {
-                const Component = componentMap[component.type as keyof typeof componentMap];
-                return Component ? (
-                  <Component key={component.id} {...component.props} />
-                ) : null;
-              })}
-            </div>
-          )}
-        </div>
+          </Element>
+        </Frame>
       </Card>
     </div>
   );

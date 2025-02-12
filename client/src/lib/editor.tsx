@@ -1,18 +1,20 @@
+import { Editor as CraftEditor, Frame } from '@craftjs/core';
 import { DndContext, DragOverlay, useSensor, useSensors, MouseSensor, TouchSensor, DragEndEvent } from '@dnd-kit/core';
-import { useCallback, useState, createContext, useContext } from 'react';
+import { useCallback, useState } from 'react';
+import { Container } from '@/components/editor/components/Container';
+import { Row } from '@/components/editor/components/Row';
+import { Column } from '@/components/editor/components/Column';
+import { RichText } from '@/components/editor/components/RichText';
+import { Button } from '@/components/editor/components/Button';
+import { Heading } from '@/components/editor/components/Heading';
+import { Image } from '@/components/editor/components/Image';
+import { Custom } from '@/components/editor/components/Custom';
 
 interface EditorProps {
   children: React.ReactNode;
 }
 
-export interface ComponentData {
-  id: string;
-  type: string;
-  props: Record<string, any>;
-}
-
-export const Editor = ({ children }: EditorProps) => {
-  const [components, setComponents] = useState<ComponentData[]>([]);
+export function Editor({ children }: EditorProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -32,40 +34,39 @@ export const Editor = ({ children }: EditorProps) => {
       const componentType = componentTypes.find(c => c.components.find(comp => comp.id === active.id));
       if (componentType) {
         const foundComponent = componentType.components.find(comp => comp.id === active.id);
-        if(foundComponent){
-          const newComponent: ComponentData = {
-            id: `${foundComponent.type}-${Date.now()}`,
-            type: foundComponent.type,
-            props: { ...foundComponent.defaultProps }
-          };
-          setComponents(prev => [...prev, newComponent]);
+        if(foundComponent) {
+          console.log('Component dropped:', foundComponent.type);
         }
       }
     }
   }, []);
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+    <CraftEditor
+      resolver={{
+        Container,
+        Row,
+        Column,
+        RichText,
+        Button,
+        Heading,
+        Image,
+        Custom
+      }}
     >
-      <EditorContext.Provider value={{ components }}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         {children}
-      </EditorContext.Provider>
-      <DragOverlay>
-        {activeId ? <div>Dragging {activeId}</div> : null}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay>
+          {activeId ? <div>Dragging {activeId}</div> : null}
+        </DragOverlay>
+      </DndContext>
+    </CraftEditor>
   );
-};
-
-interface EditorContextType {
-  components: ComponentData[];
 }
-
-const EditorContext = createContext<EditorContextType>({ components: [] });
-export const useEditor = () => useContext(EditorContext);
 
 // Available component types for the component panel
 export const componentTypes = [
